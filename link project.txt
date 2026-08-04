@@ -1,0 +1,30 @@
+GitHub https://github.com/Careducorr/uploadProjectStarWars
+
+Hospedado no Render https://uploadprojectstarwars.onrender.com
+
+
+
+app.post('/user/sing-up', (request, response) => {
+    const { name, email, password } = request.body;
+    pool.getConnection((err: any, connection: any) => {
+
+        hash(password, 10, (err, hash) => {
+
+            if (err){
+                return response.status(500).json(err)
+            }
+
+            connection.query(
+                'INSERT INTO users (user_id, name, email, password) VALUES (?,?,?,?)',
+                [uuidv4(), name, email, hash],
+                (error: any, result: any, fileds:any) => {
+                    connection.release();
+                    if (error) {
+                        response.status(400).json(error)
+                    } 
+                    response.status(200).json({sucess: true})
+                }
+            )
+        })
+    })
+})
